@@ -14,22 +14,17 @@ public class CharaBall : MonoBehaviour
 
     private Rigidbody2D rb;
 
-
-    ////* ここから追加 *////
-
-    private Vector2 procVelocity = Vector2.zero;   // Velocity計算保持用
-
-    ////* ここまで追加 *////
+    private Vector2 procVelocity = Vector2.zero;　　　// Velocity計算保持用
 
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        ShotBall();
+        //ShotBall();　　　　　　　　　　　　　　　　//　☆　<=　コメントアウトして、自動的に手球が動き始めるのを停止してください　
     }
 
     /// <summary>
-    /// 手球を打ち出す
+    /// ボールを打ち出す
     /// </summary>
     public void ShotBall()
     {
@@ -37,22 +32,12 @@ public class CharaBall : MonoBehaviour
         // 角度によって速度が変化してしまうのでnormalizedで正規化して同じ速度ベクトルにする
         Vector2 direction = new Vector2(Random.Range(-2.5f, 2.5f), 1).normalized;
 
-        // 手球を打ち出す
+        // ボールを打ち出す(摩擦や空気抵抗、重力を切ってあるので、ずっと同じ速度で動き続ける)
         rb.velocity = direction * speed;
-
-
-        ////* ここから追加 *////
 
         // 次の速度の計算用にVelocityの値を保持しておく
         procVelocity = rb.velocity;
-
-        ////* ここまで追加 *////
-
-
     }
-
-
-    ////* 新しいメソッドを１つ追加。ここから追加 *////
 
     /// <summary>
     /// 他のゲームオブジェクトに接触した際の処理
@@ -61,13 +46,13 @@ public class CharaBall : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D col)
     {
 
-        // 壁に接触した場合
-        if (col.gameObject.tag == "Wall")
-        {
+        // 壁と的球に接触した場合
+        if (col.gameObject.tag == "Wall" || col.gameObject.tag == "EnemyBall")
+        {　　//　<=　|| 以降の分岐条件を追加
             // 接触したオブジェクトの接触情報を壁に垂直な単位ベクトルとして取得
             Vector2 normalVector = col.contacts[0].normal;
 
-            // 跳ね返り用のベクトル(反射角度)をReflectメソッドを利用して計算(第1引数で手球の方向と速度、第2引数は壁に垂直な単位ベクトル)
+            // 跳ね返り用のベクトル(反射角度)をReflectメソッドを利用して計算(第1引数でボールの方向と速度、第2引数は壁に垂直な単位ベクトル)
             Vector2 reflectVector = Vector2.Reflect(procVelocity, normalVector);
 
             // 手球の速度を更新
@@ -76,9 +61,21 @@ public class CharaBall : MonoBehaviour
             // 次の速度の計算用にVelocityの値を保持しておく
             procVelocity = rb.velocity;
         }
+
+
+        ////* ここから追加 *////
+
+        // キューラインで弾いた場合
+        if (col.gameObject.tag == "CueLine")
+        {
+            // ボールの向きをいれる
+            Vector2 dir = transform.position - col.gameObject.transform.position;
+
+            // ボールに速度を加える = 弾く
+            rb.velocity = dir * speed;
+
+            // 次の計算用にVelocityの値を保持しておく
+            procVelocity = rb.velocity;
+        }
     }
-
-    ////* ここまで追加 *////
-
-
 }
