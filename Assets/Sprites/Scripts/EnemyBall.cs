@@ -5,6 +5,8 @@ using DG.Tweening;
 
 public class EnemyBall : MonoBehaviour
 {
+    [Header("的球の体力")]
+    public int hp;
     private CapsuleCollider2D capsuleCol;
 
     void Start()
@@ -44,7 +46,15 @@ public class EnemyBall : MonoBehaviour
                 // 取得できているか確認
                 Debug.Log(charaBall);
 
-                ////* ここから修正 *////
+
+                ////* ここから追加 *////
+
+                // Hpを減少させる
+                hp -= charaBall.power;
+
+                Debug.Log("的球の残り体力値 : " + hp);
+
+                ////* ここまで追加 *////
 
                 // Sequence初期化
                 Sequence sequence = DOTween.Sequence();
@@ -52,13 +62,41 @@ public class EnemyBall : MonoBehaviour
                 // ②手球と接触すると敵を回転(処理の内容は同じ)
                 transform.DOLocalRotate(new Vector3(0, 720, 0), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear);
 
-                ////* ここまで追加 *////
+                ////* ここから修正 *////
+
+                // Hpが0以下になったら
+                if (hp <= 0)
+                {
+                    DestroyEnemy(sequence);
+                }
+                ////* ここまで修正 *////
 
 
                 // TODO 敵の破壊する処理を書く
 
             }
         }
+    }
+
+    ////* 新しくメソッドを１つ追加します。ここから追加 *////
+
+    /// <summary>
+    /// 敵の破壊
+    /// </summary>
+    /// <param name="sequence"></param>
+    public void DestroyEnemy(Sequence sequence)
+    {
+        capsuleCol.enabled = false;
+
+        // 破壊までの時間
+        float duration = 0.5f;
+
+        // 内側に小さくする ドロップ内容で消える処理を分岐
+        sequence.Join(GetComponent<RectTransform>().DOSizeDelta(new Vector2(0, 100), duration).SetEase(Ease.Linear));
+
+        // スケールが 0 になるタイミング(DoTweenの時間と合わせる)で破棄
+        Destroy(gameObject, duration);
+
     }
 
 

@@ -11,6 +11,8 @@ public class CharaBall : MonoBehaviour
 {
     [Header("手球の速度")]
     public float speed;
+    [Header("手球の攻撃力")]
+    public int power;
 
     private Rigidbody2D rb;
 

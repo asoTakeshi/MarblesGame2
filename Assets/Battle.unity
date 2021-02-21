@@ -278,6 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 7.5
+  power: 5
 --- !u!70 &415663472
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -1128,6 +1129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 365598585b42a4e4cb48fefd034d31fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 20
 --- !u!70 &1739374342
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
