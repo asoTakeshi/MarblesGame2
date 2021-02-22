@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class EnemyBall : MonoBehaviour
 {
@@ -9,11 +10,18 @@ public class EnemyBall : MonoBehaviour
     public int hp;
     private CapsuleCollider2D capsuleCol;
 
+    ////* ここから追加 *////
+
+    private int maxHp;       // ゲーム開始時の体力の最大値の保持用。Sliderの計算に使用する
+
+    [SerializeField]
+    private Slider hpSlider;
+
     void Start()
     {
         capsuleCol = GetComponent<CapsuleCollider2D>();
 
-        ////* ここから追加 *////
+        
 
         // 最初のスケールを保持
         Vector2 startScale = transform.localScale;
@@ -31,10 +39,36 @@ public class EnemyBall : MonoBehaviour
         sequence.AppendInterval(0.15f);
         sequence.Join(transform.DOScale(startScale, 0.15f).SetEase(Ease.InCirc));
 
-        ////* ここまで追加 *////
+        ////* ここから修正・追加 *////
+
+        sequence.Join(transform.DOScale(startScale, 0.15f).SetEase(Ease.InCirc).OnComplete(() =>
+        {
+            // 体力の最大値を代入
+            maxHp = hp;
+
+            // 体力ゲージの表示を更新 => 的球が出現してからゲージが徐々に満タンになるアニメ演出
+            UpdateHpGauge();
 
 
+        }));
+
+        ////* ここまで *////
+         }
+
+        ////* ここから新しくメソッドを１つ追加。ここから追加 *////
+        /// <summary>
+        /// 体力ゲージの表示を更新
+        /// </summary>
+    private void UpdateHpGauge()
+    {
+        hpSlider.DOValue((float)hp / maxHp, 0.5f);
     }
+
+    ////* ここまで追加 *////
+
+
+
+
     private void OnCollisionEnter2D(Collision2D col)
     {
         // CharaBallのTagを持つゲームオブジェクトに接触したら
@@ -51,9 +85,13 @@ public class EnemyBall : MonoBehaviour
 
                 // Hpを減少させる
                 hp -= charaBall.power;
+                ////* ここから修正・追加 *////
 
-                Debug.Log("的球の残り体力値 : " + hp);
 
+                // Debug.Log("的球の残り体力値 : " + hp);/ <= 体力値の減少処理が動いているのであれば、ここでの確認は不要になりますので、削除してください
+
+                // 体力の値を体力ゲージに反映
+                UpdateHpGauge();
                 ////* ここまで追加 *////
 
                 // Sequence初期化
