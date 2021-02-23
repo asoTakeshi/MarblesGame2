@@ -14,6 +14,77 @@ public class CharaBall : MonoBehaviour
     [Header("手球の攻撃力")]
     public int power;
 
+    private int hp;          // Hpの現在値
+
+    private BattleManager battleManager;     // BattleManagerへの紐づけ
+
+    [SerializeField]
+    private CapsuleCollider2D capsuleCol;    // 手球のコライダーの制御用
+    ///* 新しくメソッドを４つ、追加する *////
+
+
+    /// <summary>
+    /// 手球の初期設定。インスタンスした際に呼び出す
+    /// </summary>
+    /// <param name="battelManager"></param>
+    public void SetUpCharaBall(BattleManager battelManager)
+    {
+
+        // BattleManagerを取得
+        this.battleManager = battelManager;
+
+        // Hpを代入
+        hp = GameData.instance.charaBallHp;
+    }
+
+    /// <summary>
+    /// Hpを更新
+    /// </summary>
+    /// <param name="amount"></param>
+    public void UpdateHp(int amount)
+    {
+        // hpを増減
+        hp += amount;
+
+        // UI上にある手球アイコンを更新
+        battleManager.uiManager.UpdateDisplayIconRemainingBall(hp);
+
+        // hpが0以下になったら
+        if (hp <= 0)
+        {
+            hp = 0;
+
+            // 手球を停止
+            StopMoveBall();
+
+            Debug.Log("Game Over");
+        }
+    }
+
+    /// <summary>
+    /// 手球を停止
+    /// </summary>
+    public void StopMoveBall()
+    {
+        // 手球の速度ベクトルを0にして止める
+        rb.velocity = Vector2.zero;
+
+        // 手球のコライダーを切って弾けないようにする
+        ChangeActivateCollider(false);
+    }
+
+    /// <summary>
+    /// 手球のコライダー制御
+    /// </summary>
+    /// <param name="isSwitch"></param>
+    public void ChangeActivateCollider(bool isSwitch)
+    {
+        capsuleCol.enabled = isSwitch;
+    }
+
+    ////* ここまで *////
+
+
     private Rigidbody2D rb;
 
     private Vector2 procVelocity = Vector2.zero;　　　// Velocity計算保持用

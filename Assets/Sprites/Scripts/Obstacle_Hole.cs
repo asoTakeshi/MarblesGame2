@@ -11,9 +11,9 @@ public class Obstacle_Hole : ObstacleBase
     {
 
         // 手球を１つ減らす
-        //charaBall.UpdateHp(-power);
+        charaBall.UpdateHp(-power);
 
         // スタート位置へ戻す
-        //StartCoroutine(battleManager.RestartCharaPosition(2.
+        StartCoroutine(battleManager.RestartCharaPosition(2.0f));
     }
 }

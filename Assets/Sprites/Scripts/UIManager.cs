@@ -41,7 +41,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="amount">残りの手球数</param>
 
-    public void UpdateDisplayIocnRemainingBall(int amount)
+    public void UpdateDisplayIconRemainingBall(int amount)
     {
         // Listにある手球アイコンの数だけfor文を実行する
         for (int i = 0; i < iconRemainingBallList.Count; i++)
